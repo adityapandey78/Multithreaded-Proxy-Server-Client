@@ -3,23 +3,16 @@
 This project is implemented using `C` and Parsing of HTTP referred from <a href = "https://github.com/vaibhavnaagar/proxy-server"> Proxy Server </a>
 
 
-## Index
 
-- [Project Theory](https://github.com/Lovepreet-Singh-LPSK/MultiThreadedProxyServerClient#project-theory)
-- [How to Run](https://github.com/Lovepreet-Singh-LPSK/MultiThreadedProxyServerClient#How-to-Run)
-- [Demo](https://github.com/Lovepreet-Singh-LPSK/MultiThreadedProxyServerClient#Demo)
-- [Contributing](https://github.com/Lovepreet-Singh-LPSK/MultiThreadedProxyServerClient#contributing)
 
-## Project Theory
 
-[[Back to top]](https://github.com/Lovepreet-Singh-LPSK/MultiThreadedProxyServerClient#index)
 
-##### Introduction
+### Introduction
 
-##### Basic Working Flow of the Proxy Server:
+### Basic Working Flow of the Proxy Server:
 ![](https://github.com/Lovepreet-Singh-LPSK/MultiThreadedProxyServerClient/blob/main/pics/UML.JPG)
 
-##### How did we implement Multi-threading?
+##### How did I implement Multi-threading?
 - Used Semaphore instead of Condition Variables and pthread_join() and pthread_exit() function. 
 - pthread_join() requires us to pass the thread id of the the thread to wait for. 
 - Semaphore’s sem_wait() and sem_post() doesn’t need any parameter. So it is a better option. 
@@ -53,10 +46,6 @@ This project is implemented using `C` and Parsing of HTTP referred from <a href 
 - We can implement requests like POST with this code.
 
 
-# Note :-
-- Code is well commented. For any doubt you can refer to the comments.
-
-
 ## How to Run
 
 ```bash
@@ -76,10 +65,3 @@ $ ./proxy <port no.>
 - When website is opened for the first time (`url not found`) then cache will be miss.
 - Then if you again open that website again then `Data is retrieved from the cache` will be printed.
 
-## Contributing
-
-[[Back to top]](https://github.com/Lovepreet-Singh-LPSK/MultiThreadedProxyServerClient#index)
-
-Feel free to add some useful. You can see `How this code can be extended`. Use ideas from there and feel free to fork and CHANGE. 
-
-#### Enjoy CODE and pull requests are highly appreciated.
