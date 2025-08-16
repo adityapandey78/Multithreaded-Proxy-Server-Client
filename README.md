@@ -1,85 +1,126 @@
-<h1>Multi Threaded Proxy Server with and without Cache</h1>
-
-This project is implemented using `C` and Parsing of HTTP referred from <a href = "https://github.com/vaibhavnaagar/proxy-server"> Proxy Server </a>
 
 
-## Index
 
-- [Project Theory](https://github.com/Lovepreet-Singh-LPSK/MultiThreadedProxyServerClient#project-theory)
-- [How to Run](https://github.com/Lovepreet-Singh-LPSK/MultiThreadedProxyServerClient#How-to-Run)
-- [Demo](https://github.com/Lovepreet-Singh-LPSK/MultiThreadedProxyServerClient#Demo)
-- [Contributing](https://github.com/Lovepreet-Singh-LPSK/MultiThreadedProxyServerClient#contributing)
+# Multi-Threaded Proxy Server (with and without Cache)
 
-## Project Theory
+This is a simple but powerful HTTP proxy server made in `C`. You can run it with or without cache. The main aim was to get hands-on with real systems concepts like `multithreading`, `synchronization`, `socket programming`, and how to build an `LRU cache` from scratch. This project is perfect for learning and also looks good in interviews!
 
-[[Back to top]](https://github.com/Lovepreet-Singh-LPSK/MultiThreadedProxyServerClient#index)
-
-##### Introduction
-
-##### Basic Working Flow of the Proxy Server:
-![](https://github.com/Lovepreet-Singh-LPSK/MultiThreadedProxyServerClient/blob/main/pics/UML.JPG)
-
-##### How did we implement Multi-threading?
-- Used Semaphore instead of Condition Variables and pthread_join() and pthread_exit() function. 
-- pthread_join() requires us to pass the thread id of the the thread to wait for. 
-- Semaphore’s sem_wait() and sem_post() doesn’t need any parameter. So it is a better option. 
+---
 
 
-##### Motivation/Need of Project
-- To Understand → 
-  - The working of requests from our local computer to the server.
-  - The handling of multiple client requests from various clients.
-  - Locking procedure for concurrency.
-  - The concept of cache and its different functions that might be used by browsers.
-- Proxy Server do → 
-  - It speeds up the process and reduces the traffic on the server side.
-  - It can be used to restrict user from accessing specific websites.
-  - A good proxy will change the IP such that the server wouldn’t know about the client who sent the request.
-  - Changes can be made in Proxy to encrypt the requests, to stop anyone accessing the request illegally from your client.
- 
-##### OS Component Used ​
-- Threading
-- Locks 
-- Semaphore
-- Cache (LRU algorithm is used in it)
 
-##### Limitations ​
-- If a URL opens multiple clients itself, then our cache will store each client’s response as a separate element in the linked list. So, during retrieval from the cache, only a chunk of response will be send and the website will not open
-- Fixed size of cache element, so big websites may not be stored in cache. 
+## Features
 
-##### How this project can be extended? ​
-- This code can be implemented using multiprocessing that can speed up the process with parallelism.
-- We can decide which type of websites should be allowed by extending the code.
-- We can implement requests like POST with this code.
+- **Multithreaded**: Handles multiple clients at the same time using `pthread`. No lag even if many people connect together!
+- **Semaphore for Control**: Used `semaphore` to limit how many clients can connect at once. So, system never hangs or crashes due to overload.
+- **LRU Cache (Optional)**: If you want, you can enable cache. It stores GET responses and serves them super fast if the same request comes again. Used a simple linked list and time logic for LRU.
+- **Custom HTTP Parsing**: Wrote my own HTTP parser to extract method, headers, etc. So, it works with most browsers and tools.
+- **Error Handling**: If someone sends a wrong request or something fails, the proxy gives a proper error message. No silent failures.
+- **Easy to Switch Modes**: Just change one line in the `Makefile` to switch between cache and no-cache mode. Very flexible for testing.
+
+---
 
 
-# Note :-
-- Code is well commented. For any doubt you can refer to the comments.
+## Architecture & Flow
+
+![Proxy Server UML](https://github.com/Lovepreet-Singh-LPSK/MultiThreadedProxyServerClient/blob/main/pics/UML.JPG)
+
+**How it works (in simple words):**
+1. Start the proxy on any port you want. It will keep listening for new connections.
+2. Whenever a new client connects (like your browser or `curl`), a new thread is created for that client. But, only up to a certain limit (set by `semaphore`).
+3. The proxy reads the HTTP request, parses it, and checks if the response is already in cache (if cache is enabled).
+4. If found in cache, it sends the cached response. Otherwise, it fetches from the real server, sends it to the client, and (if cache is on) saves it for next time.
+5. After sending the response, the thread closes the connection and is done. Proxy keeps running for new clients.
+
+---
 
 
-## How to Run
+## How to Build & Run
 
+**Requirements:**
+- Any Linux system (tested on Ubuntu, but should work on most)
+- `gcc` compiler (C99 or above)
+
+**Steps:**
 ```bash
-$ git clone https://github.com/Lovepreet-Singh-LPSK/MultiThreadedProxyServerClient.git
-$ cd MultiThreadedProxyServerClient
-$ make all
-$ ./proxy <port no.>
+git clone <this-repo-url>
+cd Multithreaded-Proxy-Server-Client
+make all
+./proxy <port>
 ```
-`Open http://localhost:port/https://www.cs.princeton.edu/`
 
-# Note:
-- This code can only be run in Linux Machine. Please disable your browser cache.
-- To run the proxy without cache Change the name of the file (`proxy_server_with_cache.c to proxy_server_without_cache.c`) MakeFile.
+**How to use:**
+- Set your browser or tool (like `curl`) to use `localhost:<port>` as the proxy.
+- Example: Open `http://localhost:<port>/https://www.cs.princeton.edu/` in your browser, or use `curl -x http://localhost:<port> https://www.cs.princeton.edu/`
+
+**Some tips:**
+- Works only on Linux (uses `pthread` and `semaphore`).
+- For testing cache, make sure to disable your browser's own cache.
+- To switch off cache, just open `Makefile` and change `proxy_server_with_cache.c` to `proxy_server_without_cache.c`.
+
+---
+
 
 ## Demo
-![](https://github.com/Lovepreet-Singh-LPSK/MultiThreadedProxyServerClient/blob/main/pics/cache.png)
-- When website is opened for the first time (`url not found`) then cache will be miss.
-- Then if you again open that website again then `Data is retrieved from the cache` will be printed.
 
-## Contributing
+![Cache Demo](https://github.com/Lovepreet-Singh-LPSK/MultiThreadedProxyServerClient/blob/main/pics/cache.png)
 
-[[Back to top]](https://github.com/Lovepreet-Singh-LPSK/MultiThreadedProxyServerClient#index)
+- First time you open a site, you will see `url not found` (means cache miss).
+- Next time, if you open the same site, you will see `Data is retrieved from the cache` (means cache hit, super fast!).
 
-Feel free to add some useful. You can see `How this code can be extended`. Use ideas from there and feel free to fork and CHANGE. 
+---
 
-#### Enjoy CODE and pull requests are highly appreciated.
+
+
+## CS Concepts I Actually Learned
+
+- **Multithreading**: Used `pthread_create`, `pthread_join`, etc. to run multiple things at once. Learnt how to avoid race conditions and why locks are important.
+- **Semaphores & Mutexes**: Used `semaphore` to control how many clients can connect, and `mutex` to make sure cache is not corrupted when many threads use it together.
+- **Socket Programming**: Understood how to use `socket()`, `bind()`, `listen()`, `accept()`, and how to send/receive data between client and server.
+- **LRU Cache**: Made my own LRU cache using linked list and time logic. Got to know how browsers and big servers use caching to save time and bandwidth.
+- **HTTP Protocol**: Wrote code to parse HTTP requests, extract headers, and forward them. Now I know how browsers and servers actually talk!
+- **Error Handling**: Learnt to handle all sorts of errors (bad requests, network issues, etc.) and give proper messages instead of crashing.
+
+---
+
+
+
+## Key Implementation Concepts (How I Did It)
+
+- **One Thread per Client**: For every client, a new thread is created. This makes the code simple and easy to debug. Also, it uses all CPU cores.
+- **Semaphore for Max Clients**: Used a counting `semaphore` to make sure only a fixed number of clients can connect at once. If limit is reached, new clients wait.
+- **Mutex for Cache**: All cache operations are protected by a `mutex` so that two threads don't mess up the cache at the same time.
+- **Custom HTTP Parser**: Instead of using any library, wrote my own code to split HTTP requests and extract what is needed.
+- **Clean Resource Management**: Made sure to close all sockets and free memory after use. No memory leaks!
+- **Debug Prints**: Added lots of `printf` statements for debugging. You can see when cache is hit/miss, when errors happen, etc.
+
+---
+
+
+
+## Limitations & What Can Be Improved
+
+- **Cache is Simple**: Each request/response is stored separately. If a site is very dynamic or opens many connections, cache may not help much.
+- **Cache Size is Fixed**: If a response is too big or too many requests come, old cache entries are removed. Big sites may not fit in cache.
+- **Only GET Supported**: Right now, only `GET` requests work. No support for `POST`, `PUT`, etc.
+- **Linux Only**: Uses `pthread` and `semaphore`, so won't run on Windows/Mac without extra work.
+
+**What can be added next:**
+- Use process pool or event-driven model for even more speed.
+- Add support for `POST` and other HTTP methods, and maybe even HTTPS.
+- Make cache size and policy configurable from command line.
+- Add some access control or filtering (block some sites, etc.).
+- Add some stats or monitoring to see how many cache hits/misses, etc.
+
+---
+
+
+
+## References & Further Reading
+
+- HTTP parsing logic adapted from: [vaibhavnaagar/proxy-server](https://github.com/vaibhavnaagar/proxy-server)
+- [Beej's Guide to Network Programming](https://beej.us/guide/bgnet/)
+- [Linux man pages: pthreads, semaphores, sockets](https://man7.org/linux/man-pages/)
+- [Wikipedia: Proxy server](https://en.wikipedia.org/wiki/Proxy_server)
+
+---
