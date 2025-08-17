@@ -63,9 +63,11 @@ make all
 
 ## Demo
 
-![Cache Demo](https://github.com/Lovepreet-Singh-LPSK/MultiThreadedProxyServerClient/blob/main/pics/cache.png)
+![alt text](webserver-gif-1.gif)
+![alt text](terminal-webserver.png)
+- First time you open a site, you will see `url not found` (means cache miss).  
 
-- First time you open a site, you will see `url not found` (means cache miss).
+![alt text](<LRU cache working.png>)
 - Next time, if you open the same site, you will see `Data is retrieved from the cache` (means cache hit, super fast!).
 
 ---
@@ -85,7 +87,7 @@ make all
 
 
 
-## Key Implementation Concepts (How I Did It)
+## Key Implementation Concepts
 
 - **One Thread per Client**: For every client, a new thread is created. This makes the code simple and easy to debug. Also, it uses all CPU cores.
 - **Semaphore for Max Clients**: Used a counting `semaphore` to make sure only a fixed number of clients can connect at once. If limit is reached, new clients wait.
