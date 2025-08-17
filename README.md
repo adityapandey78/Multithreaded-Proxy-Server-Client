@@ -63,7 +63,7 @@ make all
 
 ## Demo
 
-![alt text](webserver-gif-1.gif)
+![alt text](webserver-gif.gif)
 ![alt text](terminal-webserver.png)
 - First time you open a site, you will see `url not found` (means cache miss).  
 
